@@ -35,20 +35,20 @@ export const register=async(req:Request,res:Response)=>{
 
 // [GET]/api/v1/users
 export const index = async (req: Request, res: Response) => {
-    const tasks = await User.find()
+    const user = await User.find()
 
-    res.json(tasks)
+    res.json(user)
 }
 
 // [GET]/api/v1/users/detail/:id
 export const detail = async (req: Request, res: Response) => {
     const id: string = req.params.id
 
-    const task = await User.findOne({
+    const user = await User.findOne({
         _id: id
     })
 
-    res.json(task)
+    res.json(user)
 }
 // [POST] /api/v1/users/login
 export const login=async(req:Request,res:Response)=>{
