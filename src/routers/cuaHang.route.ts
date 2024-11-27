@@ -8,6 +8,6 @@ router.get("/:IdQuan",controller.index)
 
 router.get("/detail:id",controller.detail)
 
-
+router.get("/cua-hang-da-luu/:userId",controller.getSavedShops)
 
 export const cuaHangRoutes: Router=router

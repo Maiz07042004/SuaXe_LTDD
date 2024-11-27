@@ -50,6 +50,32 @@ export const detail = async (req: Request, res: Response) => {
 
     res.json(user)
 }
+
+// [POST] /api/v1/users/update/:id
+export const update=async (req:Request,res:Response)=>{
+    const id:string=req.params.id
+    const updateData = req.body;
+
+     // Tìm người dùng theo _id và cập nhật thông tin
+     const updatedUser = await User.findByIdAndUpdate(id, updateData, {
+        new: true,       // Trả về document đã được cập nhật
+        runValidators: true // Chạy các validator (nếu có) khi cập nhật
+    });
+
+    if (!updatedUser) {
+        return res.json({ 
+            code:400,
+            message: "Không tìm thấy" });
+    }
+
+    return res.json({
+        code:200,
+        message: "Cập nhật thành công",
+        updatedUser
+    });
+    
+}
+
 // [POST] /api/v1/users/login
 export const login=async(req:Request,res:Response)=>{
     const sdt:string=req.body.SDT;
