@@ -88,7 +88,7 @@ export const login=async(req:Request,res:Response)=>{
     if(!user){
         res.json({
             code:400,
-            message:"Không tồn tại Email"
+            message:"Không tồn tại SDT"
         })
         return;
     }

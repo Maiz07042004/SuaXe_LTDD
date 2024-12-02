@@ -10,12 +10,11 @@ export const index = async (req: Request, res: Response) => {
   res.json(donSuaChua)
 }
 
-// [GET]/api/v1/donSuaChua/create/:userId/:userShop
+// [GET]/api/v1/donSuaChua/create
 export const create=async (req: Request, res: Response) => {
-  const { userId, userShop } = req.params;
-  const { diaChi, trangThai, ghiChu, dichVu } = req.body;
+  const { IdCuaHang, IdKhachHang,DiaChi, TrangThai, GhiChu, DichVu } = req.body;
   // Kiểm tra các trường thông tin yêu cầu
-  if (!diaChi) {
+  if (!DiaChi) {
     res.json({
       code: 400,
       message: "Thiếu thông tin yêu cầu (địa chỉ)."
@@ -25,12 +24,12 @@ export const create=async (req: Request, res: Response) => {
   try {
     // Tạo đối tượng đơn hàng mới
     const newDonSuaChua: IDonSuaChua = new DonSuaChua({
-      IdCuaHang: userShop, // Lưu cửa hàng (userShop)
-      IdKhachHang: userId, // Lưu khách hàng (userId)
-      DiaChi: diaChi, // Địa chỉ của khách hàng
-      TrangThai: trangThai, // Trạng thái đơn hàng
-      GhiChu: ghiChu || "", // Ghi chú nếu có
-      DichVu: dichVu || [], // Dịch vụ đã chọn (mảng có thể trống)
+      IdCuaHang: IdCuaHang, // Lưu cửa hàng (userShop)
+      IdKhachHang: IdKhachHang, // Lưu khách hàng (userId)
+      DiaChi: DiaChi, // Địa chỉ của khách hàng
+      TrangThai: TrangThai, // Trạng thái đơn hàng
+      GhiChu: GhiChu || "", // Ghi chú nếu có
+      DichVu: DichVu || [], // Dịch vụ đã chọn (mảng có thể trống)
       NgayDatDon: new Date() // Ngày đặt đơn (tự động là thời gian hiện tại)
     });
 
@@ -40,7 +39,6 @@ export const create=async (req: Request, res: Response) => {
     res.json({
       code:200,
       message:"Tạo thành công",
-      donSuaChua: savedDonSuaChua
     })
   } catch (error) {
     res.json({

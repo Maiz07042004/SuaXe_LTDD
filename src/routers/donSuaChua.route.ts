@@ -6,7 +6,7 @@ import * as controller from "../controllers/donSuaChua.controller"
 
 router.get("/:userId",controller.index)
 
-router.post("/create/:userId/:userShop",controller.create)
+router.post("/create",controller.create)
 
 router.get("/cua-hang-da-luu/:userId")
 
