@@ -9,6 +9,8 @@ router.get("/:IdQuan",controller.index)
 // Xem chi tiết cửa hàng theo Id cửa hàng
 router.get("/detail/:id",controller.detail)
 
+router.post("/update/:IdCuaHang",controller.update)
+
 // Lấy danh sách cửa hàng đã lưu từ Id khách hàng
 router.get("/cua-hang-da-luu/:userId",controller.getSavedShops)
 

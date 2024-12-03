@@ -8,6 +8,7 @@ router.get("/",controller.index)
 
 router.get("/detail/:id",controller.detail)
 
+//Cập nhật thông tin cá nhân
 router.post("/update/:id",controller.update)
 
 router.post("/updatePassword/:id",controller.updatePassword)

@@ -47,3 +47,61 @@ export const create=async (req: Request, res: Response) => {
     });
   }
 }
+
+// [GET]/api/v1/donSuaChua/cuaHang/:IdCuaHang/:status
+export const indexCuaHang=async(req: Request, res: Response)=>{
+  const IdCuaHang=req.params.IdCuaHang;
+  const status=req.params.status;
+  const donSuaChua=await DonSuaChua.find({
+    IdCuaHang:IdCuaHang,
+    TrangThai:status
+  })
+  res.json(donSuaChua)
+}
+
+
+//[GET]/api/v1/donSuaChua/khachHang/:IdKhachHang/:status
+export const indexKhachHang=async(req: Request, res: Response)=>{
+  const IdKhachHang=req.params.IdCuaHang;
+  const status=req.params.status;
+  const donSuaChua=await DonSuaChua.find({
+    IdKhachHang:IdKhachHang,
+    TrangThai:status
+  })
+  res.json(donSuaChua)
+}
+
+//[POST] /api/v1/donSuaChua/update/:IdDonSuaChua/:status
+export const updateDonSuaChua = async (req: Request, res: Response) => {
+  const TrangThai: string = req.params.status;  // Trạng thái mới
+  const IdDonSuaChua: string = req.params.IdDonSuaChua;  // ID đơn sửa chữa
+
+  try {
+    // Tìm đơn sửa chữa trong cơ sở dữ liệu
+    const donSuaChua = await DonSuaChua.findById(IdDonSuaChua);
+
+    // Kiểm tra xem đơn sửa chữa có tồn tại hay không
+    if (!donSuaChua) {
+      res.json({code:404, message: 'Không tìm thấy đơn sửa chữa với ID này.' });
+      return
+    }
+
+    // Cập nhật trạng thái của đơn sửa chữa
+    donSuaChua.TrangThai = TrangThai;
+
+    // Lưu thay đổi vào cơ sở dữ liệu
+    await donSuaChua.save();
+
+    // Trả về thông báo thành công
+    res.json({
+      message: 'Cập nhật trạng thái đơn sửa chữa thành công.',
+      code:200,  // Có thể trả lại thông tin đơn sửa chữa đã cập nhật
+    });
+    return 
+
+  } catch (error) {
+    console.error(error);
+    res.json({code:500, message: 'Lỗi server, vui lòng thử lại.' });
+    return 
+  }
+};

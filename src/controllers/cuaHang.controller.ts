@@ -20,6 +20,32 @@ export const detail=async (req:Request,res:Response)=>{
   res.json(cuaHang)
 }
 
+// [POST] /api/v1/cuaHang/update/:id
+export const update=async (req:Request,res:Response)=>{
+  const id:string=req.params.IdCuaHang
+  const updateData = req.body;
+
+   // Tìm người dùng theo _id và cập nhật thông tin
+   const updatedUser = await User.findByIdAndUpdate(id, updateData, {
+      new: true,       // Trả về document đã được cập nhật
+      runValidators: true // Chạy các validator (nếu có) khi cập nhật
+  });
+
+  if (!updatedUser) {
+      res.json({ 
+          code:400,
+          message: "Không tìm thấy" });
+          return 
+  }
+
+  res.json({
+      code:200,
+      message: "Cập nhật thành công",
+  });
+  
+}
+
+
 // [GET] /api/v1/cuaHang/cua-hang-da-luu/:userId
 export const getSavedShops = async (req: Request, res: Response) => {
   const userId = req.params.userId; // Lấy userId từ tham số URL
