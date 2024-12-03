@@ -10,6 +10,7 @@ const cuaHangSchema = new mongoose.Schema({
   Email:String,
   Like: Number,
   IdQuan:String,
+  Password:String
 })
 
 const CuaHang = mongoose.model<ICuaHang>('CuaHang', cuaHangSchema, "cuahang");

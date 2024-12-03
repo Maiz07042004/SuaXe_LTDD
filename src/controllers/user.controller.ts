@@ -63,17 +63,64 @@ export const update=async (req:Request,res:Response)=>{
     });
 
     if (!updatedUser) {
-        return res.json({ 
+        res.json({ 
             code:400,
             message: "Không tìm thấy" });
+            return 
     }
 
-    return res.json({
+    res.json({
         code:200,
         message: "Cập nhật thành công",
-        updatedUser
     });
     
+}
+
+// [POST] /api/v1/users/updatePassword/:id
+export const updatePassword=async (req:Request,res:Response)=>{
+    const id:string=req.params.id
+    const {Password,NewPassword}=req.body
+
+    try {
+        // Kiểm tra xem các tham số có đầy đủ không
+        if (!Password || !NewPassword) {
+          res.json({ code:400, message: 'Vui lòng cung cấp mật khẩu cũ và mật khẩu mới.' });
+          return 
+        }
+    
+        // Tìm người dùng trong cơ sở dữ liệu
+        const user = await User.findById(id);
+        if (!user) {
+          res.json({ 
+            code:404,
+            message: 'Không tìm thấy người dùng với id này.' });
+          return 
+        }
+    
+         // Kiểm tra mật khẩu cũ
+    if (user.Password !== Password) {
+        res.json({code:401, message: 'Mật khẩu cũ không đúng.' });
+        return 
+      }
+  
+      // Kiểm tra mật khẩu mới (có thể thêm các điều kiện như độ dài tối thiểu...)
+      if (NewPassword.length < 6) {
+        res.json({ code:400,message: 'Mật khẩu mới phải có ít nhất 6 ký tự.' });
+        return 
+      }
+  
+      // Cập nhật mật khẩu trong cơ sở dữ liệu (Không mã hóa)
+      user.Password = NewPassword;
+      await user.save();
+  
+      res.json({ code:200,message: 'Mật khẩu đã được cập nhật thành công.' });
+  
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Lỗi server, vui lòng thử lại.' });
+      return
+    }
+
 }
 
 // [POST] /api/v1/users/login

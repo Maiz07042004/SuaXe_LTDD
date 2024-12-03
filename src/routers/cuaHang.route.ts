@@ -15,4 +15,7 @@ router.get("/cua-hang-da-luu/:userId",controller.getSavedShops)
 // Lưu cửa hàng vào danh sách cửa hàng đã lưu của người dùng
 router.post("/luu-cua-hang/:userId",controller.addSavedShop)
 
+// Xoá cửa hàng đã lưu khỏi danh sách
+router.post("/xoa-cua-hang-da-luu/:userId",controller.deleteSavedShop)
+
 export const cuaHangRoutes: Router=router

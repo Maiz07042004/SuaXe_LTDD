@@ -9,4 +9,5 @@ export interface ICuaHang extends Document{
     Email?:string,
     Like?: number;
     IdQuan?:string,
+    Password?:string
 }
