@@ -11,6 +11,38 @@ export const index = async (req: Request, res: Response) => {
   res.json(cuaHang)
 }
 
+// [POST] /api/v1/cuaHang/login
+export const login=async(req:Request,res:Response)=>{
+  const sdt:string=req.body.SDT;
+  const password:string=req.body.Password;
+
+  const cuaHang=await CuaHang.findOne({
+      SDT:sdt
+  })
+
+  if(!cuaHang){
+      res.json({
+          code:400,
+          message:"Không tồn tại SDT"
+      })
+      return;
+  }
+
+  if(cuaHang.Password!==password){
+      res.json({
+          code:400,
+          message:"Sai mật khẩu"
+      })
+      return;
+  }
+
+  res.json({
+      code:200,
+      message:"Đăng nhập thành công",
+      cuaHangId:cuaHang._id
+  })
+}
+
 // [GET]/api/v1/cuaHang/detail/:id
 export const detail=async (req:Request,res:Response)=>{
   const id: string = req.params.id

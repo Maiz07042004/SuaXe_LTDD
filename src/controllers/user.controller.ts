@@ -27,8 +27,7 @@ export const register=async(req:Request,res:Response)=>{
 
         res.json({
             code:200,
-            message:"Tạo tài khoản thành công",
-            userId:user._id
+            message:"Tạo tài khoản thành công"
         })
     }
 }

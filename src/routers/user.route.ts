@@ -6,6 +6,8 @@ import * as controller from "../controllers/user.controller"
 
 router.get("/",controller.index)
 
+router.post("/register",controller.register)
+
 router.get("/detail/:id",controller.detail)
 
 //Cập nhật thông tin cá nhân

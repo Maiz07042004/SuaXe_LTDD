@@ -3,6 +3,9 @@ import {Router} from "express"
 const router: Router=Router();
 import * as controller from "../controllers/cuaHang.controller"
 
+// Login cửa hàng
+router.post("/login",controller.login)
+
 // Lấy danh sách cửa hàng theo Id quận
 router.get("/:IdQuan",controller.index)
 
