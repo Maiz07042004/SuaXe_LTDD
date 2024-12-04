@@ -11,10 +11,13 @@ router.post("/create",controller.create)
 //Danh sách đơn hàng của cửa hàng
 router.get("/cuaHang/:IdCuaHang/:status",controller.indexCuaHang)
 
+//Danh sách đơn hàng theo trạng thái của khách hàng
+router.get("/khachHang/:IdKhachHang/:status",controller.indexKhachHang)
+
 //Danh sách đơn hàng của khách hàng
-router.get("khachHang/:IdKhachHang/:status",controller.indexKhachHang)
+router.get("/khachHang/:IdKhachHang",controller.indexKhachHangAll)
 
 // Update đơn sửa chữa
-router.post("updateDonSuaChua/:IdDonSuaChua/:status",controller.updateDonSuaChua)
+router.post("/updateDonSuaChua/:IdDonSuaChua/:status",controller.updateDonSuaChua)
 
 export const donSuaChuaRoutes: Router=router

@@ -1,6 +1,7 @@
 import { Request, Response } from "express"
 import DonSuaChua from "../models/donSuaChua.model"
 import { IDonSuaChua } from "../interface/donSuaChua.interface"
+import CuaHang from "../models/cuaHang.model"
 
 // [GET]/api/v1/donSuaChua/:userId
 export const index = async (req: Request, res: Response) => {
@@ -62,13 +63,76 @@ export const indexCuaHang=async(req: Request, res: Response)=>{
 
 //[GET]/api/v1/donSuaChua/khachHang/:IdKhachHang/:status
 export const indexKhachHang=async(req: Request, res: Response)=>{
-  const IdKhachHang=req.params.IdCuaHang;
-  const status=req.params.status;
-  const donSuaChua=await DonSuaChua.find({
-    IdKhachHang:IdKhachHang,
-    TrangThai:status
-  })
-  res.json(donSuaChua)
+  const IdKhachHang = req.params.IdKhachHang;  // Lấy IdKhachHang từ tham số URL
+  const status = req.params.status;  // Lấy status từ tham số URL
+
+  try {
+    // 1. Tìm tất cả đơn sửa chữa của khách hàng theo IdKhachHang và trạng thái
+    const donSuaChuaList: any = await DonSuaChua.find({
+      IdKhachHang: IdKhachHang,
+      TrangThai: status
+    });
+
+    // 2. Duyệt qua danh sách đơn sửa chữa và lấy thông tin cửa hàng
+    const updatedDonSuaChuaList = await Promise.all(donSuaChuaList.map(async (donSuaChua: any) => {
+      // Lấy thông tin cửa hàng từ IdCuaHang trong đơn sửa chữa
+      const cuaHang = await CuaHang.findById(donSuaChua.IdCuaHang);
+
+      // Nếu tìm thấy cửa hàng, gán thông tin vào đơn sửa chữa
+      if (cuaHang) {
+        return {
+          ...donSuaChua.toObject(), // Chuyển đổi mongoose document thành object
+          TenCuaHang: cuaHang.TenCuaHang,
+          HinhAnh: cuaHang.HinhAnh,
+          DiaChi: cuaHang.DiaChi
+        };
+      }
+      
+      // Nếu không tìm thấy cửa hàng, trả về đơn sửa chữa ban đầu
+      return donSuaChua.toObject();
+    }));
+
+    // 3. Trả về danh sách đơn sửa chữa đã bổ sung thông tin cửa hàng
+    res.json(updatedDonSuaChuaList);
+  } catch (error) {
+    res.status(500).json({ message: 'Có lỗi xảy ra' });
+  }
+}
+
+//[GET]/api/v1/donSuaChua/khachHang/:IdKhachHang/:status
+export const indexKhachHangAll=async(req: Request, res: Response)=>{
+  const IdKhachHang = req.params.IdKhachHang;  // Lấy IdKhachHang từ tham số URL
+
+  try {
+    // 1. Tìm tất cả đơn sửa chữa của khách hàng theo IdKhachHang và trạng thái
+    const donSuaChuaList: any = await DonSuaChua.find({
+      IdKhachHang: IdKhachHang
+    });
+
+    // 2. Duyệt qua danh sách đơn sửa chữa và lấy thông tin cửa hàng
+    const updatedDonSuaChuaList = await Promise.all(donSuaChuaList.map(async (donSuaChua: any) => {
+      // Lấy thông tin cửa hàng từ IdCuaHang trong đơn sửa chữa
+      const cuaHang = await CuaHang.findById(donSuaChua.IdCuaHang);
+
+      // Nếu tìm thấy cửa hàng, gán thông tin vào đơn sửa chữa
+      if (cuaHang) {
+        return {
+          ...donSuaChua.toObject(), // Chuyển đổi mongoose document thành object
+          TenCuaHang: cuaHang.TenCuaHang,
+          HinhAnh: cuaHang.HinhAnh,
+          DiaChi: cuaHang.DiaChi
+        };
+      }
+      
+      // Nếu không tìm thấy cửa hàng, trả về đơn sửa chữa ban đầu
+      return donSuaChua.toObject();
+    }));
+
+    // 3. Trả về danh sách đơn sửa chữa đã bổ sung thông tin cửa hàng
+    res.json(updatedDonSuaChuaList);
+  } catch (error) {
+    res.status(500).json({ message: 'Có lỗi xảy ra' });
+  }
 }
 
 //[POST] /api/v1/donSuaChua/update/:IdDonSuaChua/:status

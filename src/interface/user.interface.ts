@@ -7,4 +7,5 @@ export interface IUser extends Document{
     Password?: string;
     Email?:string;
     CuaHangDaLuu?:any[];
+    HinhAnh?:string;
 }

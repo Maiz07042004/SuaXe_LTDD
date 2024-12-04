@@ -11,6 +11,10 @@ const userSchema = new mongoose.Schema({
     CuaHangDaLuu:{
         type:Array,
         default:[]
+    },
+    HinhAnh:{
+        type:String,
+        default:"https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcRM-cD267Y-hZg3PTaPHGCowMwHWTpdW0RCfc2eownunIzruAo1"
     }
 })
 

@@ -5,7 +5,10 @@ const cuaHangSchema = new mongoose.Schema({
   TenCuaHang: String,
   SDT:String,
   MoTa:String,
-  HinhAnh:String,
+  HinhAnh:{
+    type:String,
+    default:"https://congcutot.vn/uploads/store/page/article/2023/07/thiet-ke-quy-mo-vua-theo-chieu-ngang.jpg"
+  },
   DiaChi:String,
   Email:String,
   Like: Number,
