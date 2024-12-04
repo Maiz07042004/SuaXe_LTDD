@@ -11,7 +11,10 @@ const cuaHangSchema = new mongoose.Schema({
   },
   DiaChi:String,
   Email:String,
-  Like: Number,
+  Like: {
+    type:Number,
+    default:0
+  },
   IdQuan:String,
   Password:String
 })
