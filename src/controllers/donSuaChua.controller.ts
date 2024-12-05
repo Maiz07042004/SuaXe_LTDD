@@ -57,7 +57,7 @@ export const indexCuaHang=async(req: Request, res: Response)=>{
   const donSuaChuaList=await DonSuaChua.find({
     IdCuaHang:IdCuaHang,
     TrangThai:status
-  })
+  }).sort({ NgayDatDon: -1 });
   // 2. Duyệt qua danh sách đơn sửa chữa và lấy thông tin cửa hàng
   const updatedDonSuaChuaList = await Promise.all(donSuaChuaList.map(async (donSuaChua: any) => {
     // Lấy thông tin cửa hàng từ IdCuaHang trong đơn sửa chữa
@@ -92,7 +92,7 @@ export const indexKhachHang=async(req: Request, res: Response)=>{
     const donSuaChuaList: any = await DonSuaChua.find({
       IdKhachHang: IdKhachHang,
       TrangThai: status
-    });
+    }).sort({ NgayDatDon: -1 });;
 
     // 2. Duyệt qua danh sách đơn sửa chữa và lấy thông tin cửa hàng
     const updatedDonSuaChuaList = await Promise.all(donSuaChuaList.map(async (donSuaChua: any) => {
@@ -128,7 +128,7 @@ export const indexKhachHangAll=async(req: Request, res: Response)=>{
     // 1. Tìm tất cả đơn sửa chữa của khách hàng theo IdKhachHang và trạng thái
     const donSuaChuaList: any = await DonSuaChua.find({
       IdKhachHang: IdKhachHang
-    });
+    }).sort({ NgayDatDon: -1 });;
 
     // 2. Duyệt qua danh sách đơn sửa chữa và lấy thông tin cửa hàng
     const updatedDonSuaChuaList = await Promise.all(donSuaChuaList.map(async (donSuaChua: any) => {
@@ -187,6 +187,73 @@ export const updateDonSuaChua = async (req: Request, res: Response) => {
   } catch (error) {
     console.error(error);
     res.json({code:500, message: 'Lỗi server, vui lòng thử lại.' });
+    return 
+  }
+};
+
+//[GET] /api/v1/donSuaChua/chiTietDonSuaChua/:IdDonSuaChua
+export const chiTietDonSuaChua = async (req: Request, res: Response) => {
+  const IdDonSuaChua=req.params.IdDonSuaChua;
+  const donSuaChua = await DonSuaChua.findById(IdDonSuaChua);
+  const cuaHang=await CuaHang.findById(donSuaChua?.IdCuaHang);
+  const khachHang=await User.findById(donSuaChua?.IdKhachHang);
+
+  res.json({
+    _id:donSuaChua?._id,
+    TrangThai:donSuaChua?.TrangThai,
+    NgayDatDon:donSuaChua?.NgayDatDon,
+    DichVu:donSuaChua?.DichVu,
+    DiaChi:donSuaChua?.DiaChi,
+    TenKhachHang:khachHang?.TenKhachHang,
+    SDT:khachHang?.SDT,
+    TenCuaHang:cuaHang?.TenCuaHang,
+    IdCuaHang:cuaHang?._id,
+    HinhAnh:cuaHang?.HinhAnh,
+    DaLike:donSuaChua?.DaLike
+  });
+}
+
+export const capNhatLike = async (req: Request, res: Response) => {
+  try {
+    const IdDonSuaChua = req.params.IdDonSuaChua;
+    const donSuaChua = await DonSuaChua.findById(IdDonSuaChua);
+    
+    if (!donSuaChua) {
+      res.json({
+        code: 400,
+        message: "Đơn sửa chữa không tồn tại"
+      });
+      return 
+    }
+
+    // Lấy cửa hàng liên quan đến đơn sửa chữa
+    const cuaHang = await CuaHang.findById(donSuaChua?.IdCuaHang);
+    if (!cuaHang) {
+      res.json({
+        code: 400,
+        message: "Cửa hàng không tồn tại"
+      });
+      return 
+    }
+
+    // Cập nhật trạng thái DaLike và số lượng Like của cửa hàng
+    donSuaChua.DaLike = true
+    await donSuaChua.save();
+
+    cuaHang.Like = (cuaHang.Like || 0) + 1; // Đảm bảo Like có giá trị mặc định nếu không được khởi tạo
+    await cuaHang.save();
+
+    res.json({
+      code: 200,
+      message: "Cập nhật like thành công"
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.json({
+      code: 500,
+      message: "Lỗi server"
+    });
     return 
   }
 };

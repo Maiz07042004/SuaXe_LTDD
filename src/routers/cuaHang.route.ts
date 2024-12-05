@@ -6,6 +6,8 @@ import * as controller from "../controllers/cuaHang.controller"
 // Login cửa hàng
 router.post("/login",controller.login)
 
+router.post("/register",controller.register)
+
 // Lấy danh sách cửa hàng theo Id quận
 router.get("/:IdQuan",controller.index)
 
@@ -13,6 +15,8 @@ router.get("/:IdQuan",controller.index)
 router.get("/detail/:id",controller.detail)
 
 router.post("/update/:IdCuaHang",controller.update)
+
+router.post("/updatePassword/:id",controller.updatePassword)
 
 // Lấy danh sách cửa hàng đã lưu từ Id khách hàng
 router.get("/cua-hang-da-luu/:userId",controller.getSavedShops)

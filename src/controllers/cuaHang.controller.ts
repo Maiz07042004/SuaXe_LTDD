@@ -1,6 +1,7 @@
 import CuaHang from "../models/cuaHang.model"
 import { Request, Response } from "express"
 import User from "../models/user.model"
+import Quan from "../models/quan.model"
 
 // [GET]/api/v1/cuaHang/:IdQuan
 export const index = async (req: Request, res: Response) => {
@@ -43,20 +44,89 @@ export const login=async(req:Request,res:Response)=>{
   })
 }
 
+// [POST] /api/v1/cuaHang/register
+export const register=async(req:Request,res:Response)=>{
+
+  const existSDT=await CuaHang.findOne({
+      SDT:req.body.SDT
+  })
+
+  if(existSDT){
+      res.json({
+          code:400,
+          message:"SDT đã tồn tại"
+      })
+  } else{
+      const quan=await Quan.findOne({TenQuan:req.body.TenQuan})
+      if (!quan) {
+        res.json({
+          code: 400,
+          message: "Quận không tồn tại"
+        });
+        return 
+      }
+      const cuaHang=new CuaHang({
+          TenCuaHang:req.body.TenCuaHang,
+          Email:req.body.Email,
+          SDT:req.body.SDT,
+          Password:req.body.Password,
+          IdQuan:quan._id,
+          MoTa:req.body.MoTa,
+          DiaChi:req.body.DiaChi
+      })
+      await cuaHang.save();
+
+
+      res.json({
+          code:200,
+          message:"Tạo tài khoản thành công"
+      })
+  }
+}
+
 // [GET]/api/v1/cuaHang/detail/:id
 export const detail=async (req:Request,res:Response)=>{
-  const id: string = req.params.id
-  const cuaHang=await CuaHang.findOne({
-    _id:id
-  })
-  res.json(cuaHang)
+  const id: string = req.params.id;
+
+  // Tìm cửa hàng theo ID
+  const cuaHang:any = await CuaHang.findOne({ _id: id });
+
+  if (!cuaHang) {
+     res.status(404).json({ message: "Cửa hàng không tồn tại" });
+     return
+  }
+
+  // Tìm tên quận theo ID quận của cửa hàng
+  const quan = await Quan.findOne({ _id: cuaHang.IdQuan });
+
+  if (quan) {
+    res.json({
+      ...cuaHang.toObject(), // Chuyển đổi mongoose document thành object
+      TenQuan: quan.TenQuan
+    });
+    return
+
+  }
+
+  res.json(cuaHang);
 }
 
 // [POST] /api/v1/cuaHang/update/:id
 export const update=async (req:Request,res:Response)=>{
   const id:string=req.params.IdCuaHang
-  const updateData = req.body;
+  const updateData:any = req.body;
 
+  if (updateData.TenQuan) {
+    // Tìm quận theo tên quận
+    const quan = await Quan.findOne({ TenQuan: updateData.TenQuan });
+    if (quan) {
+      // Gán IdQuan từ tên quận vào dữ liệu cập nhật
+      updateData.IdQuan = quan._id;
+    } else {
+      res.status(400).json({ message: "Quận không tồn tại" });
+      return 
+    }
+  }
    // Tìm người dùng theo _id và cập nhật thông tin
    const updatedCuaHang = await CuaHang.findByIdAndUpdate(id, updateData, {
       new: true,       // Trả về document đã được cập nhật
@@ -76,6 +146,54 @@ export const update=async (req:Request,res:Response)=>{
   });
   
 }
+
+// [POST] /api/v1/cuaHang/updatePassword/:id
+export const updatePassword=async (req:Request,res:Response)=>{
+  const id:string=req.params.id
+  const {Password,NewPassword}=req.body
+
+  try {
+      // Kiểm tra xem các tham số có đầy đủ không
+      if (!Password || !NewPassword) {
+        res.json({ code:400, message: 'Vui lòng cung cấp mật khẩu cũ và mật khẩu mới.' });
+        return 
+      }
+  
+      // Tìm người dùng trong cơ sở dữ liệu
+      const cuaHang = await CuaHang.findById(id);
+      if (!cuaHang) {
+        res.json({ 
+          code:404,
+          message: 'Không tìm thấy cửa hàng với id này.' });
+        return 
+      }
+  
+       // Kiểm tra mật khẩu cũ
+  if (cuaHang.Password !== Password) {
+      res.json({code:401, message: 'Mật khẩu cũ không đúng.' });
+      return 
+    }
+
+    // Kiểm tra mật khẩu mới (có thể thêm các điều kiện như độ dài tối thiểu...)
+    if (NewPassword.length < 6) {
+      res.json({ code:400,message: 'Mật khẩu mới phải có ít nhất 6 ký tự.' });
+      return 
+    }
+
+    // Cập nhật mật khẩu trong cơ sở dữ liệu (Không mã hóa)
+    cuaHang.Password = NewPassword;
+    await cuaHang.save();
+
+    res.json({ code:200,message: 'Mật khẩu đã được cập nhật thành công.' });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Lỗi server, vui lòng thử lại.' });
+    return
+  }
+
+}
+
 
 
 // [GET] /api/v1/cuaHang/cua-hang-da-luu/:userId

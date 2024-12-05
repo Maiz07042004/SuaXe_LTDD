@@ -8,4 +8,5 @@ export interface IDonSuaChua extends Document{
     DiaChi?:string,
     DichVu?:any[],
     GhiChu?: string;
+    DaLike?:boolean;
 }

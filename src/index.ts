@@ -18,6 +18,6 @@ app.use(express.urlencoded({extended:true}));
 
 mainV1Routes(app)
 
-app.listen(port, () => {
+app.listen(3000,'0.0.0.0', () => {
     console.log(`App listening on port ${port}`)
 });

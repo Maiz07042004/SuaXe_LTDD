@@ -14,7 +14,11 @@ const donSuaChuaSchema = new mongoose.Schema({
     type:Array,
     default:[]
   },
-  GhiChu: String
+  GhiChu: String,
+  DaLike:{
+    type:Boolean,
+    default:false
+  }
 })
 
 const DonSuaChua = mongoose.model<IDonSuaChua>('DonSuaChua', donSuaChuaSchema, "donsuachua");

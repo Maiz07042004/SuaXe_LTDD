@@ -20,4 +20,8 @@ router.get("/khachHang/:IdKhachHang",controller.indexKhachHangAll)
 // Update đơn sửa chữa
 router.post("/updateDonSuaChua/:IdDonSuaChua/:status",controller.updateDonSuaChua)
 
+router.get("/chiTietDonSuaChua/:IdDonSuaChua",controller.chiTietDonSuaChua)
+
+router.post("/capNhatLike/:IdDonSuaChua",controller.capNhatLike)
+
 export const donSuaChuaRoutes: Router=router
