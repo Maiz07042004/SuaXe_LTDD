@@ -2,6 +2,7 @@ import express, { Express} from "express";
 import dotenv from "dotenv"
 import * as database from "./config/database"
 import mainV1Routes from "./routers/index.route"
+import "./service/cronJob"
 
 
 dotenv.config()

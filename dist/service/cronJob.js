@@ -14,19 +14,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const node_cron_1 = __importDefault(require("node-cron"));
 const donSuaChua_model_1 = __importDefault(require("../models/donSuaChua.model"));
-node_cron_1.default.schedule('0 * * * *', () => __awaiter(void 0, void 0, void 0, function* () {
+node_cron_1.default.schedule('*/5 * * * *', () => __awaiter(void 0, void 0, void 0, function* () {
     const now = new Date();
-    const threeHoursAgo = new Date(now.getTime() - 1 * 60 * 60 * 1000);
+    const oneHourAgo = new Date(now.getTime() - 15 * 60 * 1000);
     try {
         const donSuaChuaList = yield donSuaChua_model_1.default.find({
-            NgayDatDon: { $lt: threeHoursAgo },
-            TrangThai: { $ne: 'DaHuy' }
+            TrangThai: 'ChoXacNhan',
+            NgayDatDon: { $lt: oneHourAgo }
         });
-        donSuaChuaList.forEach((donSuaChua) => __awaiter(void 0, void 0, void 0, function* () {
+        for (const donSuaChua of donSuaChuaList) {
             donSuaChua.TrangThai = 'DaHuy';
             yield donSuaChua.save();
             console.log(`Đơn sửa chữa ${donSuaChua._id} đã được cập nhật trạng thái thành 'DaHuy'`);
-        }));
+        }
     }
     catch (error) {
         console.error('Có lỗi xảy ra khi cập nhật trạng thái:', error);
